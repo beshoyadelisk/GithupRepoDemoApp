@@ -14,7 +14,7 @@ private val DarkColorPalette = darkColors(
     secondary = CopticOrphansSecondary,
     background = Color(0xFF101010),
     onBackground = Color.White,
-    surface = Color(0xFF303030),
+    surface = SurfaceColor,
     onSurface = Color.White
 )
 
@@ -22,7 +22,7 @@ private val LightColorPalette = lightColors(
     primary = CopticOrphansPrimary,
     primaryVariant = Purple700,
     onPrimary = Color.White,
-    secondary = CopticOrphansSecondary,
+    secondary = CopticOrphansSecondary
     /* Other default colors to override
       background = Color.White,
       surface = Color.White,

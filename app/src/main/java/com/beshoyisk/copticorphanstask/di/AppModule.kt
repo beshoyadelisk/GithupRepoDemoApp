@@ -1,7 +1,6 @@
 package com.beshoyisk.copticorphanstask.di
 
 import android.content.Context
-import androidx.paging.ExperimentalPagingApi
 import androidx.room.Room
 import com.beshoyisk.copticorphanstask.BuildConfig
 import com.beshoyisk.copticorphanstask.data.local.RepDatabase
@@ -27,7 +26,6 @@ import retrofit2.create
 import java.io.IOException
 import javax.inject.Singleton
 
-@OptIn(ExperimentalPagingApi::class)
 @Module
 @InstallIn(SingletonComponent::class)
 class AppModule {

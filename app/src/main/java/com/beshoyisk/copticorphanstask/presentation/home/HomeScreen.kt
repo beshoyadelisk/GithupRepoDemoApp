@@ -52,6 +52,7 @@ import com.beshoyisk.copticorphanstask.components.CommonTextField
 import com.beshoyisk.copticorphanstask.components.RepoItemScreen
 import com.beshoyisk.copticorphanstask.components.WelcomeMessage
 import com.beshoyisk.copticorphanstask.domain.model.RepoItem
+import retrofit2.HttpException
 import java.net.UnknownHostException
 
 @Composable
@@ -75,6 +76,13 @@ fun HomeScreen(
             val loadStateError = (repos.loadState.refresh as LoadState.Error)
             val message = when (loadStateError.error) {
                 is UnknownHostException -> "No Connection Available!"
+                is HttpException ->
+                    if ((loadStateError.error as HttpException).code() == 401) {
+                        "Please Add API key"
+                    } else {
+                        (loadStateError.error as HttpException).message()
+                    }
+
                 else -> loadStateError.error.message ?: "Failed to load data"
             }
             Toast.makeText(

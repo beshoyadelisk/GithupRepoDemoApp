@@ -1,8 +1,6 @@
 package com.beshoyisk.copticorphanstask.presentation.home
 
 import android.util.Log
-import androidx.compose.runtime.saveable.SaveableStateHolder
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -24,9 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RepoViewModel @Inject constructor(
-    private val githubRepository: GithubRepository,
-    savedStateHandle: SavedStateHandle
-) : ViewModel() {
+    private val githubRepository: GithubRepository) : ViewModel() {
     private var job: Job? = null
 
     private val _searchQuery = MutableStateFlow("")

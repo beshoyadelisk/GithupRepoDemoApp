@@ -16,9 +16,3 @@ fun FirebaseUser.toUserData() = UserData(
     email = email
 )
 
-fun FirebaseUser.toUserData(name: String) = UserData(
-    userId = uid,
-    username = name,
-    profilePictureUrl = photoUrl?.toString(),
-    email = email
-)

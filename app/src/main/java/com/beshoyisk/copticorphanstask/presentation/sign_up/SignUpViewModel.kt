@@ -3,16 +3,11 @@ package com.beshoyisk.copticorphanstask.presentation.sign_up
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.beshoyisk.copticorphanstask.data.remote.auth.SignInResult
-import com.beshoyisk.copticorphanstask.data.repository.EmailPwAuthRepositoryImpl
-import com.beshoyisk.copticorphanstask.domain.model.toUserData
 import com.beshoyisk.copticorphanstask.domain.repository.EmailPwAuthRepository
 import com.beshoyisk.copticorphanstask.domain.repository.UserRepository
 import com.beshoyisk.copticorphanstask.util.Resource
-import com.beshoyisk.copticorphanstask.util.USER_COLLECTION
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

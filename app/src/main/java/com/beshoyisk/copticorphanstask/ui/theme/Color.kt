@@ -13,4 +13,5 @@ val Purple700 = Color(0xFF3700B3)
 
 val CopticOrphansPrimary = Color(0xFF063FF2)
 val CopticOrphansSecondary = Color(0xFF0B1BCF)
+val SurfaceColor = Color(0xFF7885FF)
 val CopticOrphansTertiary = Color(0xFFF4B611)

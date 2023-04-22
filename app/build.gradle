@@ -9,6 +9,8 @@ plugins {
 android {
     namespace 'com.beshoyisk.copticorphanstask'
     compileSdk 33
+    def localProperties = new Properties()
+    localProperties.load(new FileInputStream(rootProject.file("local.properties")))
 
     defaultConfig {
         applicationId "com.beshoyisk.copticorphanstask"
@@ -16,6 +18,7 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
+        buildConfigField "String", "GithubAccessToken",localProperties['GITHUB_ACCESS_TOKEN']
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -26,13 +29,10 @@ android {
         buildConfig = true
     }
     buildTypes {
-        debug {
-            buildConfigField 'String', "GithubAccessToken", GITHUB_ACCESS_TOKEN
-        }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField 'String', "GithubAccessToken", GITHUB_ACCESS_TOKEN
         }
     }
     compileOptions {
@@ -81,6 +81,7 @@ dependencies {
     //Firebase Auth
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.android.gms:play-services-auth:20.5.0'
+    implementation 'com.facebook.android:facebook-login:latest.release'
     //Firestore
     implementation 'com.google.firebase:firebase-firestore-ktx'
     //Navigation

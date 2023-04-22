@@ -2,7 +2,6 @@ package com.beshoyisk.copticorphanstask.data.remote.github
 
 import com.beshoyisk.copticorphanstask.data.remote.github.dto.RepoDtoItem
 import com.beshoyisk.copticorphanstask.data.remote.github.dto.RepoSearchItemDto
-import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 

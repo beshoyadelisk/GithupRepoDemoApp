@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -23,15 +25,21 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.beshoyisk.copticorphanstask.data.remote.auth.SignInResult
 import com.beshoyisk.copticorphanstask.domain.model.UserData
 import com.beshoyisk.copticorphanstask.navigation.Screen
-import com.beshoyisk.copticorphanstask.presentation.sign_up.SignUpScreen
 import com.beshoyisk.copticorphanstask.presentation.home.HomeScreen
 import com.beshoyisk.copticorphanstask.presentation.home.RepoViewModel
 import com.beshoyisk.copticorphanstask.presentation.log_in.LoginScreen
 import com.beshoyisk.copticorphanstask.presentation.log_in.LoginViewModel
+import com.beshoyisk.copticorphanstask.presentation.sign_up.SignUpScreen
 import com.beshoyisk.copticorphanstask.presentation.sign_up.SignUpViewModel
 import com.beshoyisk.copticorphanstask.ui.theme.CopticOrphansTaskTheme
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -43,10 +51,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             CopticOrphansTaskTheme {
+
                 // A surface container using the 'background' color from the theme
                 Scaffold {
                     Surface(
-                        modifier = Modifier.fillMaxSize().padding(it),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(it),
                         color = MaterialTheme.colors.background
                     ) {
                         val navController = rememberNavController()
@@ -63,12 +74,51 @@ class MainActivity : ComponentActivity() {
                                         userData = loginViewModel.getSignedInUser()
                                     )
                                 }
+                                val callbackManager = remember { CallbackManager.Factory.create() }
+                                val loginManager = LoginManager.getInstance()
+                                val fbAuthLauncher = rememberLauncherForActivityResult(
+                                    contract =
+                                    loginManager.createLogInActivityResultContract(
+                                        callbackManager,
+                                        null
+                                    )
+                                ) {}
+                                DisposableEffect(key1 = Unit) {
+                                    loginManager.registerCallback(callbackManager,
+                                        object : FacebookCallback<LoginResult> {
+                                            override fun onCancel() {
+                                                val signInResult = SignInResult(
+                                                    data = null,
+                                                    errorMessage = "Cancelled"
+                                                )
+                                                loginViewModel.onSignInResult(signInResult)
+                                            }
+
+                                            override fun onError(error: FacebookException) {
+                                                val signInResult = SignInResult(
+                                                    data = null,
+                                                    errorMessage = error.message
+                                                        ?: "Failed to login"
+                                                )
+                                                loginViewModel.onSignInResult(signInResult)
+                                            }
+
+                                            override fun onSuccess(result: LoginResult) {
+                                                loginViewModel.signInByFacebook(result.accessToken)
+                                            }
+
+                                        })
+                                    onDispose {
+                                        loginManager.unregisterCallback(callbackManager)
+                                    }
+                                }
                                 val launcher = rememberLauncherForActivityResult(
                                     contract = ActivityResultContracts.StartIntentSenderForResult(),
                                     onResult = { result ->
                                         if (result.resultCode == RESULT_OK) {
                                             loginViewModel.signInByIntent(
-                                                result.data ?: return@rememberLauncherForActivityResult
+                                                result.data
+                                                    ?: return@rememberLauncherForActivityResult
                                             )
                                         }
                                     }
@@ -95,10 +145,15 @@ class MainActivity : ComponentActivity() {
                                         onEmailPwSignInClicked = loginViewModel::signByEmailAndPw,
                                         onSingUpCLicked = {
                                             navController.navigate(Screen.SignUp.route)
+                                            loginViewModel.resetState()
+                                        },
+                                        onFacebookSignInCLicked = {
+                                            fbAuthLauncher.launch(listOf("email"))
                                         },
                                         onGoogleSignInClicked = {
                                             lifecycleScope.launch {
-                                                val signInIntentSender = loginViewModel.googleSignIn()
+                                                val signInIntentSender =
+                                                    loginViewModel.googleSignIn()
                                                 launcher.launch(
                                                     IntentSenderRequest.Builder(
                                                         signInIntentSender ?: return@launch

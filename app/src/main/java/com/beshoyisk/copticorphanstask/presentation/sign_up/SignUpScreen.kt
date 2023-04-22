@@ -139,8 +139,7 @@ fun SignUpScreen(
                 verticalArrangement = Arrangement.Center
             ) {
                 CommonButton(
-                    modifier = Modifier
-                        .fillMaxWidth(0.5f),
+                    modifier = Modifier.fillMaxWidth(0.5f),
                     text = stringResource(id = R.string.sign_up),
                     cornerRadius = 15.dp,
                     onClick = {

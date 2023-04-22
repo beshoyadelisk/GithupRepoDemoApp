@@ -6,18 +6,23 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.beshoyisk.copticorphanstask.data.remote.auth.SignInResult
 import com.beshoyisk.copticorphanstask.domain.model.UserData
+import com.beshoyisk.copticorphanstask.domain.model.toUserData
 import com.beshoyisk.copticorphanstask.domain.repository.EmailPwAuthRepository
 import com.beshoyisk.copticorphanstask.domain.repository.GoogleAuthRepository
 import com.beshoyisk.copticorphanstask.domain.repository.UserRepository
 import com.beshoyisk.copticorphanstask.util.Resource
+import com.beshoyisk.copticorphanstask.util.isGoogleSignIn
+import com.facebook.AccessToken
 import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.UserInfo
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
@@ -47,6 +52,25 @@ class LoginViewModel @Inject constructor(
                 isPasswordError = isValidPassword(password).not()
             )
         }
+    }
+
+    fun signInByFacebook(accessToken: AccessToken) {
+        viewModelScope.launch {
+            val credential = FacebookAuthProvider.getCredential(accessToken.token)
+            val signInResult = try {
+                val result = firebaseAuth.signInWithCredential(credential).await()
+                if (result.user != null) {
+                    SignInResult(data = result.user!!.toUserData(), null)
+                } else {
+                    SignInResult(data = null, errorMessage = "Authentication failed.")
+                }
+            } catch (ex: FirebaseAuthUserCollisionException) {
+                SignInResult(data = null, errorMessage = ex.message)
+            }
+            onSignInResult(signInResult)
+        }
+
+
     }
 
     fun signByEmailAndPw() {
@@ -96,7 +120,7 @@ class LoginViewModel @Inject constructor(
         return isPasswordError || isEmailError
     }
 
-    private fun onSignInResult(result: SignInResult) {
+    fun onSignInResult(result: SignInResult) {
         _state.update {
             it.copy(
                 isSignInSuccessful = result.data != null,
@@ -130,16 +154,19 @@ class LoginViewModel @Inject constructor(
         return null
     }
 
+
     suspend fun signOut() {
-        val providerData = firebaseAuth.currentUser?.providerData ?: return
-        if (providerData.isGoogleSignIn()) {
+        if (firebaseAuth.currentUser?.isGoogleSignIn() ?: return) {
             googleAuthRepository.signOut()
         } else {
             emailPwAuthRepository.signOut()
         }
     }
 
+    companion object {
+        private const val TAG = "LoginViewModelTAG"
+    }
+
 }
 
-private fun List<UserInfo>.isGoogleSignIn(): Boolean = this.any { it.providerId == "google.com" }
 

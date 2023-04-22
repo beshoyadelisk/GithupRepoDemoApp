@@ -4,6 +4,9 @@ import com.beshoyisk.copticorphanstask.domain.model.UserData
 import com.beshoyisk.copticorphanstask.domain.model.toUserData
 import com.beshoyisk.copticorphanstask.domain.repository.UserRepository
 import com.beshoyisk.copticorphanstask.util.USER_COLLECTION
+import com.beshoyisk.copticorphanstask.util.isFacebookSignIn
+import com.beshoyisk.copticorphanstask.util.isGoogleSignIn
+import com.facebook.AccessToken
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
@@ -22,19 +25,33 @@ class UserRepositoryImpl @Inject constructor(
         )
         val document = firestore.collection(USER_COLLECTION).document(firebaseUser.uid)
         document.set(map)
-        return firebaseUser.toUserData(username)
+        return firebaseUser.toUserData().copy(username = username)
     }
 
 
     override suspend fun getUserFromFirestore(firebaseUser: FirebaseUser): UserData {
-        val firestoreUser =
-            firestore.collection(USER_COLLECTION).document(firebaseUser.uid).get().await()
-        val name = firestoreUser.data?.getOrDefault("name", "")
-        return if (name == null) {
-            firebaseUser.toUserData()
-        } else {
-            firebaseUser.toUserData(name.toString())
+        return when {
+            firebaseUser.isFacebookSignIn() -> {
+                val accessToken = AccessToken.getCurrentAccessToken()?.token
+                val photoUrl =
+                    firebaseUser.photoUrl.toString() + "?access_token=${accessToken}"
+                firebaseUser.toUserData().copy(profilePictureUrl = photoUrl)
+            }
+
+            firebaseUser.isGoogleSignIn() -> firebaseUser.toUserData()
+
+            else -> {
+                val name = getUserNameFromFirestore(firebaseUser)
+                firebaseUser.toUserData().copy(username = name)
+            }
         }
+
+    }
+
+    private suspend fun getUserNameFromFirestore(firebaseUser: FirebaseUser): String {
+        val userDoc =
+            firestore.collection(USER_COLLECTION).document(firebaseUser.uid).get().await()
+        return userDoc.data?.getOrDefault("name", "") as String
     }
 
     companion object {
