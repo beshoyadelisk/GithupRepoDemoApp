@@ -1,4 +1,4 @@
-package com.beshoyisk.copticorphanstask.presentation
+package com.beshoyisk.copticorphanstask.presentation.sign_up
 
 
 import android.widget.Toast
@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import com.beshoyisk.copticorphanstask.R
 import com.beshoyisk.copticorphanstask.components.CommonButton
 import com.beshoyisk.copticorphanstask.components.CommonTextField
-import com.beshoyisk.copticorphanstask.presentation.sign_up.SignUpState
 import com.beshoyisk.copticorphanstask.ui.theme.CopticOrphansPrimary
 
 @OptIn(ExperimentalComposeUiApi::class)

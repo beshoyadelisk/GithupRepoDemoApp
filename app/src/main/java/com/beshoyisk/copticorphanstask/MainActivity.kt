@@ -25,7 +25,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.beshoyisk.copticorphanstask.domain.model.UserData
 import com.beshoyisk.copticorphanstask.navigation.Screen
-import com.beshoyisk.copticorphanstask.presentation.SignUpScreen
+import com.beshoyisk.copticorphanstask.presentation.sign_up.SignUpScreen
 import com.beshoyisk.copticorphanstask.presentation.home.HomeScreen
 import com.beshoyisk.copticorphanstask.presentation.home.RepoViewModel
 import com.beshoyisk.copticorphanstask.presentation.log_in.LoginScreen
