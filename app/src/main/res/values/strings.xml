@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">CopticOrphansTask</string>
+    <string name="web_client_id">69954863569-cp9rdsttgcclu6c1a3ummsf3uspt6a68.apps.googleusercontent.com</string>
+    <string name="sign_in">Sign in</string>
+    <string name="sign_out">Sign out</string>
+
+    <string name="good_morning">Good Morning</string>
+    <string name="good_afternoon">Good Afternoon</string>
+    <string name="good_evening">Good Evening</string>
+    <string name="good_night">Good Night</string>
+    <string name="hello">Hello</string>
+    <string name="by_x">By %1$s</string>
+    <string name="search_here">Search here</string>
+    <string name="failed_to_sigin">Failed to sign in</string>
+    <string name="email">Email</string>
+    <string name="mail_cant_be_empty">Mail can\'t be empty</string>
+    <string name="password_cant_be_empty">Invalid password</string>
+    <string name="password">Password</string>
+    <string name="login_using_google">Sign in with Google</string>
+    <string name="google">Google</string>
+    <string name="or_connect_using">Or connect using</string>
+    <string name="name">Name</string>
+    <string name="required">Required</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="password_invalid">Password must be more than 6 chars</string>
+</resources>
